@@ -80,45 +80,41 @@ Facilitar o dia a dia de profissionais da saúde através de tecnologia intuitiv
 flowchart TB
     subgraph Client["💻 CAMADA DE APRESENTAÇÃO"]
         PWA["🌐 PWA Vue.js<br/>Interface Responsiva<br/>Vuetify UI"]
-        Mobile["📱 Mobile First<br/>Touch Optimized<br/>Offline Support"]
+        Mobile["📱 Mobile First<br/>Design Touch<br/>Responsivo"]
     end
 
     subgraph API["⚙️ CAMADA DE APLICAÇÃO"]
-        REST["🔌 API REST<br/>Go + Gin/Echo<br/>JWT Authentication"]
-        WS["🔄 WebSocket<br/>Real-time Updates<br/>Live Notifications"]
+        REST["🔌 API REST<br/>Go + Gin<br/>Autenticação JWT"]
+        WS["🔄 WebSocket<br/>Atualizações em Tempo Real<br/>Notificações ao Vivo"]
     end
 
     subgraph Services["🔧 CAMADA DE SERVIÇOS"]
-        Jobs["⏰ Cron Jobs<br/>Scheduled Tasks<br/>Background Processing"]
-        Notify["📢 Notifications<br/>Email • SMS • Push"]
-        WhatsApp["💬 WhatsApp API<br/>Business Integration<br/>Message Queue"]
+        Jobs["⏰ Tarefas Agendadas<br/>CLI Go via Cron<br/>Processamento em Background"]
+        WhatsApp["💬 Evolution API<br/>Integração WhatsApp<br/>Fila de Mensagens"]
     end
 
     subgraph Data["💾 CAMADA DE DADOS"]
-        MySQL["🗄️ MySQL Database<br/>SQL Puro<br/>Transactions"]
-        Storage["📁 File Storage<br/>Google Cloud Storage<br/>Images & PDFs"]
+        MySQL["🗄️ Banco MySQL<br/>SQL Puro<br/>Transações"]
+        Storage["📁 Armazenamento<br/>Google Cloud Storage<br/>Imagens & PDFs"]
     end
 
     subgraph External["🌍 SERVIÇOS EXTERNOS"]
-        Payment["💳 Mercado Pago<br/>PIX Gateway"]
-        SMS["📱 SMS Provider<br/>Twilio/Zenvia"]
-        Email["📧 Email SMTP<br/>SendGrid"]
+        Payment["💳 Stripe<br/>Pagamentos & PIX"]
+        EvoAPI["📱 Evolution API<br/>evo.clickclinicas.com.br"]
+        OmieERP["🏢 Omie ERP<br/>Integração Financeira"]
     end
 
     PWA <-->|HTTPS| REST
     Mobile <-->|HTTPS| REST
-    REST <-->|Queries| MySQL
+    REST <-->|Queries SQL| MySQL
     REST <-.->|WebSocket| WS
-    REST -->|Store| Storage
+    REST -->|Upload| Storage
     
-    Jobs -->|Schedule| Notify
-    Jobs -->|Send| WhatsApp
-    WhatsApp <-->|API| External
-    Notify -->|Dispatch| SMS
-    Notify -->|Dispatch| Email
-    Notify -->|Dispatch| Payment
-    
-    Services <-->|Read/Write| MySQL
+    Jobs -->|Envia| WhatsApp
+    Jobs <-->|Leitura/Escrita| MySQL
+    WhatsApp <-->|API REST| EvoAPI
+    REST -->|Pagamentos| Payment
+    Jobs -->|Sincroniza| OmieERP
 
     style Client fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     style API fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
@@ -140,10 +136,10 @@ flowchart TB
 <sub>Progressive Web App</sub>
 
 • Vue.js 2.6 + Vuetify 2.6<br/>
-• Vuex State Management<br/>
-• Service Workers + PWA<br/>
+• Gerenciamento de Estado Vuex<br/>
+• PWA Instalável<br/>
 • FullCalendar + Chart.js<br/>
-• WebSocket Client<br/>
+• Cliente WebSocket<br/>
 
 </td>
 <td width="25%" align="center">
@@ -154,8 +150,8 @@ flowchart TB
 
 • Go 1.21+ com Gin 1.9<br/>
 • SQL Puro (sem ORM)<br/>
-• JWT v5 + Rate Limiting<br/>
-• Repository Pattern<br/>
+• JWT v5 + Limitação de Taxa<br/>
+• Padrão Repository<br/>
 • WebSocket + Firebase<br/>
 
 </td>
@@ -163,10 +159,10 @@ flowchart TB
 
 **⚙️ Serviços**
 <br/>
-<sub>CLI Background Tasks</sub>
+<sub>Tarefas CLI em Background</sub>
 
 • Goroutines + Semáforos<br/>
-• WhatsApp API Custom<br/>
+• Evolution API WhatsApp<br/>
 • Integração Omie ERP<br/>
 • Lembretes Automáticos<br/>
 • Fila de Mensagens<br/>
@@ -191,35 +187,35 @@ flowchart TB
 ### 🔄 Fluxo de Dados
 
 ```
-┌──────────────┐
-│   Cliente    │  1. Usuário interage com a interface
-│   (Browser)  │
-└──────┬───────┘
-       │ HTTPS/WSS
-       ▼
-┌──────────────┐
-│  API Gateway │  2. Validação, autenticação JWT
-│   (Go)       │
-└──────┬───────┘
-       │
-       ├─────────────┐
-       ▼             ▼
-┌──────────┐   ┌──────────┐
-│ Business │   │ Services │  3. Lógica de negócio
-│  Logic   │   │  Layer   │
-└────┬─────┘   └────┬─────┘
-     │              │
-     └───────┬──────┘
-             ▼
-     ┌──────────────┐
-     │   Database   │  4. Persistência
-     │    MySQL     │
-     └──────────────┘
-             │
-             ▼
-     ┌──────────────┐
-     │   Response   │  5. Retorno ao cliente
-     └──────────────┘
+┌──────────────────┐
+│     Cliente      │  1. Usuário interage com a interface
+│   (Navegador)    │
+└────────┬─────────┘
+         │ HTTPS/WSS
+         ▼
+┌──────────────────┐
+│   API Gateway    │  2. Validação e autenticação JWT
+│      (Go)        │
+└────────┬─────────┘
+         │
+         ├──────────────┐
+         ▼              ▼
+┌──────────────┐  ┌──────────────┐
+│   Lógica de  │  │   Camada de  │  3. Lógica de negócio
+│   Negócio    │  │   Serviços   │
+└──────┬───────┘  └──────┬───────┘
+       │                 │
+       └────────┬────────┘
+                ▼
+       ┌─────────────────┐
+       │  Banco de Dados │  4. Persistência
+       │      MySQL      │
+       └─────────────────┘
+                │
+                ▼
+       ┌─────────────────┐
+       │    Resposta     │  5. Retorno ao cliente
+       └─────────────────┘
 ```
 
 ---
@@ -228,7 +224,7 @@ flowchart TB
 
 ### Frontend
 - **Framework:** Vue.js 2.6.14 + Vuetify 2.6.0
-- **PWA:** Service Workers, Manifest.json
+- **PWA:** PWA Instalável com Service Workers e Manifest.json
 - **Estado:** Vuex 3.0.1
 - **Roteamento:** Vue Router 3.2.0
 - **Build:** Vue CLI 5.0
@@ -238,38 +234,40 @@ flowchart TB
 - **Editor de Imagem:** Toast UI Image Editor 3.15
 - **Editor de Texto:** CKEditor5 3.0
 - **Notificações:** Vue-toastification 1.7, SweetAlert2 11.14, WebSocket
-- **Pagamentos:** Mercado Pago SDK, Payment Token EFI
+- **Pagamentos:** Stripe (via Backend), Payment Token EFI
 - **Comunicação:** Axios 1.6 + Vue-axios 3.5
 - **Utilitários:** Moment.js, DOMPurify, Vuedraggable, Vue-the-mask
 
 ### Backend
 - **Linguagem:** Go (Golang) 1.21+
 - **Framework Web:** Gin 1.9.1 + CORS
-- **Database:** MySQL Driver 1.8.1 + SQL Puro (sem ORM)
-- **Arquitetura:** Repository Pattern
+- **Banco de Dados:** MySQL Driver 1.8.1 + SQL Puro (sem ORM)
+- **Arquitetura:** Padrão Repository
 - **Autenticação:** JWT v5.0.0
-- **Rate Limiting:** Ulule Limiter 3.11
+- **Limitação de Taxa:** Ulule Limiter 3.11
 - **WebSocket:** gorilla/websocket 1.5.3
 - **Firebase:** Admin SDK 3.13.0
-- **Cloud Storage:** Google Cloud Storage 1.43
+- **Armazenamento:** Google Cloud Storage 1.43
 - **Pagamentos:** Stripe Go SDK 83.1
 - **Segurança:** golang.org/x/crypto
 
 ### Serviços
-- **Tipo:** Aplicação CLI Go (chamada via Cron do sistema)
-- **Database:** MySQL Driver 1.9.3 + SQL Puro
-- **Arquitetura:** Repository Pattern
+- **Tipo:** Aplicação CLI Go (executada via Cron do sistema operacional)
+- **Banco de Dados:** MySQL Driver 1.9.3 + SQL Puro
+- **Arquitetura:** Padrão Repository
 - **Concorrência:** Goroutines + sync.WaitGroup (semáforos)
-- **WhatsApp:** API REST customizada (evo.clickclinicas.com.br)
+- **WhatsApp:** Evolution API (evo.clickclinicas.com.br)
 - **ERP:** Integração Omie via HTTP
 - **Pagamentos:** Stripe Go SDK 81.4
 - **Funções:** Lembretes (prévio/pós/aniversário), Alteração de status, Validação WhatsApp, Fila de mensagens, Integração cadastro Omie
 
 ### Infraestrutura
 - **Banco de Dados:** MySQL 8.0+
-- **Storage:** Google Cloud Storage + Firebase
-- **Cron Jobs:** Sistema operacional (chamadas CLI)
-- **Pagamentos:** Stripe + Mercado Pago
+- **Armazenamento:** Google Cloud Storage + Firebase
+- **Tarefas Agendadas:** Cron do sistema operacional (executa CLI Go)
+- **Pagamentos:** Stripe
+- **Comunicação:** Evolution API WhatsApp (evo.clickclinicas.com.br)
+- **ERP:** Integração Omie
 - **Deploy:** Servidor dedicado + CI/CD
 - **Monitoramento:** Logs estruturados
 
