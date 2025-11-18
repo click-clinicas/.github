@@ -34,23 +34,24 @@ Facilitar o dia a dia de profissionais da saúde através de tecnologia intuitiv
 - **Histórico de Atendimentos** - Timeline completo de consultas e procedimentos
 
 ### 📅 Agenda Inteligente
-- **Calendário Interativo** - Visualização por dia, semana ou mês
+- **Calendário Interativo** - Visualização por dia, semana ou mês com FullCalendar
 - **Agendamento Online** - Integração com site e WhatsApp
-- **Lembretes Automáticos** - Notificações por SMS, e-mail e WhatsApp
+- **Lembretes Automáticos** - Notificações via WhatsApp (prévio, pós-consulta e aniversário)
 - **Gestão de Horários** - Controle de disponibilidade por profissional
 
 ### 💰 Financeiro Completo
 - **Orçamentos Digitais** - Criação e envio profissional em PDF
 - **Controle de Caixa** - Entradas, saídas e fluxo de caixa
 - **Comissionamento** - Cálculo automático de comissões por profissional
-- **Pagamentos** - Integração com Mercado Pago e PIX
+- **Pagamentos** - Integração com Stripe (assinaturas, checkout, PIX)
 - **Relatórios Gerenciais** - Dashboards e análises financeiras
 
-### 💬 Comunicação Omnichannel
-- **WhatsApp Integrado** - Envio de mensagens, lembretes e confirmações
-- **Mensagens Personalizadas** - Templates customizáveis por tipo de lembrete
-- **Campanhas** - Envio em massa para aniversariantes e retorno
-- **Histórico de Comunicação** - Rastreamento completo de mensagens
+### 💬 Comunicação via WhatsApp
+- **WhatsApp Integrado** - Integração com Evolution API para envio de mensagens
+- **Mensagens Personalizadas** - Templates customizáveis com variáveis dinâmicas
+- **Lembretes Automatizados** - Prévio, pós-consulta e aniversário
+- **Validação de Números** - Verificação automática de WhatsApp válidos
+- **Fila de Mensagens** - Processamento em background via serviços Go
 
 ### 📊 Gestão de Tratamentos
 - **Catálogo de Procedimentos** - Biblioteca completa de tratamentos
@@ -60,9 +61,9 @@ Facilitar o dia a dia de profissionais da saúde através de tecnologia intuitiv
 
 ### 📱 Aplicativo PWA
 - **Instalável** - Funciona como app nativo no celular
-- **Offline First** - Funciona mesmo sem internet
-- **Notificações Push** - Alertas em tempo real
-- **Sincronização Automática** - Dados sempre atualizados
+- **Interface Responsiva** - Design adaptável para mobile, tablet e desktop
+- **Notificações em Tempo Real** - WebSocket para atualizações instantâneas
+- **Cache de Assets** - Ícones e recursos estáticos em cache
 
 ### 🔐 Segurança e Permissões
 - **Perfis de Acesso** - Diferentes níveis de permissão
@@ -95,7 +96,7 @@ flowchart TB
 
     subgraph Data["💾 CAMADA DE DADOS"]
         MySQL["🗄️ Banco MySQL<br/>SQL Puro<br/>Transações"]
-        Storage["📁 Armazenamento<br/>Google Cloud Storage<br/>Imagens & PDFs"]
+        Storage["📁 Armazenamento<br/>Firebase Storage<br/>Imagens & PDFs"]
     end
 
     subgraph External["🌍 SERVIÇOS EXTERNOS"]
@@ -174,11 +175,11 @@ flowchart TB
 <br/>
 <sub>Persistência de Dados</sub>
 
-• MySQL 8.0+<br/>
+• MySQL 5.7<br/>
 • SQL Queries Diretas<br/>
 • Transactions<br/>
 • Backup Automático<br/>
-• Google Cloud Storage<br/>
+• Firebase Storage<br/>
 
 </td>
 </tr>
@@ -187,35 +188,83 @@ flowchart TB
 ### 🔄 Fluxo de Dados
 
 ```
-┌──────────────────┐
-│     Cliente      │  1. Usuário interage com a interface
-│   (Navegador)    │
-└────────┬─────────┘
-         │ HTTPS/WSS
-         ▼
-┌──────────────────┐
-│   API Gateway    │  2. Validação e autenticação JWT
-│      (Go)        │
-└────────┬─────────┘
-         │
-         ├──────────────┐
-         ▼              ▼
-┌──────────────┐  ┌──────────────┐
-│   Lógica de  │  │   Camada de  │  3. Lógica de negócio
-│   Negócio    │  │   Serviços   │
-└──────┬───────┘  └──────┬───────┘
-       │                 │
-       └────────┬────────┘
-                ▼
-       ┌─────────────────┐
-       │  Banco de Dados │  4. Persistência
-       │      MySQL      │
-       └─────────────────┘
-                │
-                ▼
-       ┌─────────────────┐
-       │    Resposta     │  5. Retorno ao cliente
-       └─────────────────┘
+┌───────────────────────────────────────────────────────────┐
+│                    FLUXO DE REQUISIÇÃO                    │
+└───────────────────────────────────────────────────────────┘
+
+  ┌─────────────────┐
+  │  Cliente Vue.js │  → Usuário interage com interface
+  │  (Navegador)    │
+  └────────┬────────┘
+           │ 
+           │ 1. HTTP Request (HTTPS)
+           │    ou WebSocket (WSS)
+           ▼
+  ┌─────────────────┐
+  │   API REST Go   │  → Validação JWT + Rate Limiting
+  │   Gin Router    │
+  └────────┬────────┘
+           │
+           │ 2. Executa Controller
+           ▼
+  ┌─────────────────┐
+  │  Repository     │  → Padrão Repository
+  │  Layer          │     (abstração de dados)
+  └────────┬────────┘
+           │
+           │ 3. SQL Query
+           ▼
+  ┌─────────────────┐
+  │  MySQL 5.7      │  → Persistência
+  │  Transaction    │
+  └────────┬────────┘
+           │
+           │ 4. Retorna Dados
+           ▼
+  ┌─────────────────┐
+  │  JSON Response  │  → Controller formata resposta
+  └────────┬────────┘
+           │
+           │ 5. HTTP Response
+           ▼
+  ┌─────────────────┐
+  │  Cliente Atualiza│ → Interface Vue.js renderiza
+  │  Interface       │
+  └─────────────────┘
+
+┌───────────────────────────────────────────────────────────┐
+│              FLUXO DE TAREFAS EM BACKGROUND               │
+└───────────────────────────────────────────────────────────┘
+
+  ┌─────────────────┐
+  │  Cron do SO     │  → Executa CLI Go em horários agendados
+  └────────┬────────┘
+           │
+           │ 1. Executa função CLI
+           ▼
+  ┌─────────────────┐
+  │  Serviço Go     │  → enviaLembretesPrevio()
+  │  (CLI App)      │     enviaLembretesPos()
+  └────────┬────────┘     enviaLembretesAniversario()
+           │              processaFilaMensagens()
+           │ 2. Busca dados     alteraStatusOrcamentos()
+           ▼
+  ┌─────────────────┐
+  │  MySQL          │  → Consulta agendamentos/pacientes
+  └────────┬────────┘
+           │
+           │ 3. Para cada registro
+           ▼
+  ┌─────────────────┐
+  │  Evolution API  │  → Envia mensagem WhatsApp
+  │  (evo.click...) │
+  └────────┬────────┘
+           │
+           │ 4. Atualiza status
+           ▼
+  ┌─────────────────┐
+  │  MySQL          │  → Marca como enviado
+  └─────────────────┘
 ```
 
 ---
@@ -234,26 +283,26 @@ flowchart TB
 - **Editor de Imagem:** Toast UI Image Editor 3.15
 - **Editor de Texto:** CKEditor5 3.0
 - **Notificações:** Vue-toastification 1.7, SweetAlert2 11.14, WebSocket
-- **Pagamentos:** Stripe (via Backend), Payment Token EFI
+- **Pagamentos:** Stripe (checkout de assinaturas via Backend)
 - **Comunicação:** Axios 1.6 + Vue-axios 3.5
 - **Utilitários:** Moment.js, DOMPurify, Vuedraggable, Vue-the-mask
 
 ### Backend
 - **Linguagem:** Go (Golang) 1.21+
 - **Framework Web:** Gin 1.9.1 + CORS
-- **Banco de Dados:** MySQL Driver 1.8.1 + SQL Puro (sem ORM)
+- **Banco de Dados:** MySQL 5.7 Driver 1.8.1 + SQL Puro (sem ORM)
 - **Arquitetura:** Padrão Repository
 - **Autenticação:** JWT v5.0.0
 - **Limitação de Taxa:** Ulule Limiter 3.11
 - **WebSocket:** gorilla/websocket 1.5.3
 - **Firebase:** Admin SDK 3.13.0
-- **Armazenamento:** Google Cloud Storage 1.43
+- **Armazenamento:** Firebase Storage
 - **Pagamentos:** Stripe Go SDK 83.1
 - **Segurança:** golang.org/x/crypto
 
 ### Serviços
 - **Tipo:** Aplicação CLI Go (executada via Cron do sistema operacional)
-- **Banco de Dados:** MySQL Driver 1.9.3 + SQL Puro
+- **Banco de Dados:** MySQL 5.7 Driver 1.9.3 + SQL Puro
 - **Arquitetura:** Padrão Repository
 - **Concorrência:** Goroutines + sync.WaitGroup (semáforos)
 - **WhatsApp:** Evolution API (evo.clickclinicas.com.br)
@@ -262,8 +311,8 @@ flowchart TB
 - **Funções:** Lembretes (prévio/pós/aniversário), Alteração de status, Validação WhatsApp, Fila de mensagens, Integração cadastro Omie
 
 ### Infraestrutura
-- **Banco de Dados:** MySQL 8.0+
-- **Armazenamento:** Google Cloud Storage + Firebase
+- **Banco de Dados:** MySQL 5.7
+- **Armazenamento:** Firebase Storage
 - **Tarefas Agendadas:** Cron do sistema operacional (executa CLI Go)
 - **Pagamentos:** Stripe
 - **Comunicação:** Evolution API WhatsApp (evo.clickclinicas.com.br)
@@ -310,9 +359,9 @@ flowchart TB
 ## 🎯 Diferenciais
 
 ### 🚀 Performance
-- **Carregamento Rápido:** Backend em Go otimizado
-- **Otimização:** Lazy loading e code splitting
-- **Offline:** Funciona sem internet com PWA
+- **Carregamento Rápido:** Backend em Go de alta performance
+- **Otimização:** Lazy loading e code splitting no Vue.js
+- **Cache Inteligente:** Assets estáticos em cache para melhor desempenho
 
 ### 💡 Usabilidade
 - **Interface Intuitiva:** Design limpo e fácil de usar
