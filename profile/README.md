@@ -74,29 +74,154 @@ Facilitar o dia a dia de profissionais da saúde através de tecnologia intuitiv
 
 ## 🏗️ Arquitetura do Sistema
 
+<div align="center">
+
+```mermaid
+flowchart TB
+    subgraph Client["💻 CAMADA DE APRESENTAÇÃO"]
+        PWA["🌐 PWA Vue.js<br/>Interface Responsiva<br/>Vuetify UI"]
+        Mobile["📱 Mobile First<br/>Touch Optimized<br/>Offline Support"]
+    end
+
+    subgraph API["⚙️ CAMADA DE APLICAÇÃO"]
+        REST["🔌 API REST<br/>Go + Gin/Echo<br/>JWT Authentication"]
+        WS["🔄 WebSocket<br/>Real-time Updates<br/>Live Notifications"]
+    end
+
+    subgraph Services["🔧 CAMADA DE SERVIÇOS"]
+        Jobs["⏰ Cron Jobs<br/>Scheduled Tasks<br/>Background Processing"]
+        Notify["📢 Notifications<br/>Email • SMS • Push"]
+        WhatsApp["💬 WhatsApp API<br/>Business Integration<br/>Message Queue"]
+    end
+
+    subgraph Data["💾 CAMADA DE DADOS"]
+        MySQL["🗄️ MySQL Database<br/>GORM ORM<br/>Transactions"]
+        Cache["⚡ Cache Layer<br/>Redis (futuro)<br/>Performance"]
+        Storage["📁 File Storage<br/>AWS S3 / Local<br/>Images & PDFs"]
+    end
+
+    subgraph External["🌍 SERVIÇOS EXTERNOS"]
+        Payment["💳 Mercado Pago<br/>PIX Gateway"]
+        SMS["📱 SMS Provider<br/>Twilio/Zenvia"]
+        Email["📧 Email SMTP<br/>SendGrid"]
+    end
+
+    PWA <-->|HTTPS| REST
+    Mobile <-->|HTTPS| REST
+    REST <-->|Queries| MySQL
+    REST <-.->|WebSocket| WS
+    REST -->|Store| Storage
+    
+    Jobs -->|Schedule| Notify
+    Jobs -->|Send| WhatsApp
+    WhatsApp <-->|API| External
+    Notify -->|Dispatch| SMS
+    Notify -->|Dispatch| Email
+    Notify -->|Dispatch| Payment
+    
+    Services <-->|Read/Write| MySQL
+    API <-.->|Cache| Cache
+
+    style Client fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style API fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Services fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Data fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style External fill:#fce4ec,stroke:#c2185b,stroke-width:2px
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     🌐 FRONTEND (Vue.js)                    │
-│         Progressive Web App • Interface Responsiva          │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      🔌 API REST (Go)                       │
-│        Backend de Alta Performance • JWT Auth              │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   ⚙️ SERVIÇOS (Go)                          │
-│    Background Jobs • Notificações • Integração WhatsApp    │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      💾 BANCO DE DADOS                      │
-│                        MySQL                                │
-└─────────────────────────────────────────────────────────────┘
+
+</div>
+
+### 📐 Arquitetura em Camadas
+
+<table>
+<tr>
+<td width="25%" align="center">
+
+**🌐 Frontend**
+<br/>
+<sub>Progressive Web App</sub>
+
+• Vue.js 2.6 + Vuetify<br/>
+• Vuex State Management<br/>
+• Service Workers<br/>
+• Offline First<br/>
+• WebSocket Client<br/>
+
+</td>
+<td width="25%" align="center">
+
+**🔌 API REST**
+<br/>
+<sub>Backend de Alta Performance</sub>
+
+• Go (Golang) 1.21+<br/>
+• Gin Framework<br/>
+• JWT Authentication<br/>
+• CORS & Security<br/>
+• Rate Limiting<br/>
+
+</td>
+<td width="25%" align="center">
+
+**⚙️ Serviços**
+<br/>
+<sub>Background Processing</sub>
+
+• Cron Scheduler<br/>
+• Message Queue<br/>
+• WhatsApp Business<br/>
+• Email & SMS<br/>
+• Push Notifications<br/>
+
+</td>
+<td width="25%" align="center">
+
+**💾 Banco de Dados**
+<br/>
+<sub>Persistência de Dados</sub>
+
+• MySQL 8.0+<br/>
+• GORM ORM<br/>
+• Migrations<br/>
+• Backup Automático<br/>
+• Replicação<br/>
+
+</td>
+</tr>
+</table>
+
+### 🔄 Fluxo de Dados
+
+```
+┌──────────────┐
+│   Cliente    │  1. Usuário interage com a interface
+│   (Browser)  │
+└──────┬───────┘
+       │ HTTPS/WSS
+       ▼
+┌──────────────┐
+│  API Gateway │  2. Validação, autenticação JWT
+│   (Go)       │
+└──────┬───────┘
+       │
+       ├─────────────┐
+       ▼             ▼
+┌──────────┐   ┌──────────┐
+│ Business │   │ Services │  3. Lógica de negócio
+│  Logic   │   │  Layer   │
+└────┬─────┘   └────┬─────┘
+     │              │
+     └───────┬──────┘
+             ▼
+     ┌──────────────┐
+     │   Database   │  4. Persistência
+     │    MySQL     │
+     └──────────────┘
+             │
+             ▼
+     ┌──────────────┐
+     │   Response   │  5. Retorno ao cliente
+     └──────────────┘
 ```
 
 ---
@@ -105,10 +230,10 @@ Facilitar o dia a dia de profissionais da saúde através de tecnologia intuitiv
 
 ### Frontend
 - **Framework:** Vue.js 2.6 + Vuetify
+- **PWA:** Service Workers, Cache API, Workbox
 - **Estado:** Vuex
 - **Roteamento:** Vue Router
 - **Build:** Vue CLI 5.0
-- **PWA:** Service Workers, Cache API
 - **Notificações:** Web Push API, WebSocket
 - **Gráficos:** Chart.js
 - **PDF:** jsPDF, html2canvas
