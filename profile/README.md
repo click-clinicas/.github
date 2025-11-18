@@ -444,8 +444,8 @@ Este software é proprietário e confidencial. Uso não autorizado é proibido.
 
 - **Website:** [clickclinicas.com.br](https://clickclinicas.com.br)
 - **E-mail:** contato@clickclinicas.com.br
-- **Suporte:** suporte@clickclinicas.com.br
-- **WhatsApp:** +55 (11) 9999-9999
+- **Suporte:** contato@clickclinicas.com.br
+- **WhatsApp:** +55 (12) 99194-5422
 
 ---
 
