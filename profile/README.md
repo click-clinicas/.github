@@ -311,13 +311,14 @@ flowchart TB
 - **Funções:** Lembretes (prévio/pós/aniversário), Alteração de status, Validação WhatsApp, Fila de mensagens, Integração cadastro Omie
 
 ### Infraestrutura
-- **Banco de Dados:** MySQL 5.7
+- **Frontend (Landing Page + Painel ADM):** Vercel (deploy automático)
+- **Backend (API Go):** Fly.io (alta disponibilidade)
+- **Serviços (Cron Jobs):** Data Center próprio
+- **Banco de Dados:** MySQL 5.7 (Data Center próprio)
 - **Armazenamento:** Firebase Storage
-- **Tarefas Agendadas:** Cron do sistema operacional (executa CLI Go)
 - **Pagamentos:** Stripe
 - **Comunicação:** Evolution API WhatsApp (evo.clickclinicas.com.br)
 - **ERP:** Integração Omie
-- **Deploy:** Servidor dedicado + CI/CD
 - **Monitoramento:** Logs estruturados
 
 ---
@@ -453,11 +454,26 @@ Este software é proprietário e confidencial. Uso não autorizado é proibido.
 
 Desenvolvido com ❤️ por uma equipe apaixonada por tecnologia e saúde.
 
-### 👨‍💻 Desenvolvedores
-- **Full Stack:** Vue.js + Go
-- **Frontend:** Especialistas em UX/UI
-- **Backend:** Arquitetura de microserviços
-- **DevOps:** CI/CD e infraestrutura cloud
+### 👨‍💻 Desenvolvedor Principal
+
+<div align="center">
+
+**João Gabriel**  
+*Full Stack Developer | DevOps Engineer | Infrastructure Specialist*
+
+[![GitHub](https://img.shields.io/badge/GitHub-nerosolutions-181717?style=for-the-badge&logo=github)](https://github.com/nerosolutions/)
+[![Instagram](https://img.shields.io/badge/Instagram-@odevcaicara-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/odevcaicara/)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-12_99195--2451-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/5512991952451)
+
+</div>
+
+**Responsabilidades:**
+- 🎨 **Frontend:** Desenvolvimento completo em Vue.js + Vuetify
+- ⚙️ **Backend:** API REST em Go com arquitetura escalável
+- 🔧 **Serviços:** Background jobs e integrações
+- 🚀 **DevOps:** CI/CD, deploy e monitoramento
+- 🏗️ **Infraestrutura:** Gerenciamento de servidores e data center
+- 📊 **Banco de Dados:** Administração e otimização MySQL
 
 ---
 
