@@ -477,16 +477,6 @@ Desenvolvido com ❤️ por uma equipe apaixonada por tecnologia e saúde.
 
 ---
 
-## 📚 Documentação
-
-Documentação completa disponível em nossos repositórios:
-
-- [Documentação da API](https://github.com/click-clinicas/clickclinica-go/docs)
-- [Guia de Instalação](https://github.com/click-clinicas/clickclinica-adm/docs)
-- [Guia do Usuário](https://docs.clickclinicas.com.br)
-
----
-
 ## 🌟 Reconhecimentos
 
 Agradecemos às seguintes tecnologias e comunidades que tornaram este projeto possível:
