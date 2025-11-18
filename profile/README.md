@@ -95,9 +95,8 @@ flowchart TB
     end
 
     subgraph Data["💾 CAMADA DE DADOS"]
-        MySQL["🗄️ MySQL Database<br/>GORM ORM<br/>Transactions"]
-        Cache["⚡ Cache Layer<br/>Redis (futuro)<br/>Performance"]
-        Storage["📁 File Storage<br/>AWS S3 / Local<br/>Images & PDFs"]
+        MySQL["🗄️ MySQL Database<br/>SQL Puro<br/>Transactions"]
+        Storage["📁 File Storage<br/>Google Cloud Storage<br/>Images & PDFs"]
     end
 
     subgraph External["🌍 SERVIÇOS EXTERNOS"]
@@ -120,7 +119,6 @@ flowchart TB
     Notify -->|Dispatch| Payment
     
     Services <-->|Read/Write| MySQL
-    API <-.->|Cache| Cache
 
     style Client fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     style API fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
@@ -141,10 +139,10 @@ flowchart TB
 <br/>
 <sub>Progressive Web App</sub>
 
-• Vue.js 2.6 + Vuetify<br/>
+• Vue.js 2.6 + Vuetify 2.6<br/>
 • Vuex State Management<br/>
-• Service Workers<br/>
-• Offline First<br/>
+• Service Workers + PWA<br/>
+• FullCalendar + Chart.js<br/>
 • WebSocket Client<br/>
 
 </td>
@@ -154,24 +152,24 @@ flowchart TB
 <br/>
 <sub>Backend de Alta Performance</sub>
 
-• Go (Golang) 1.21+<br/>
-• Gin Framework<br/>
-• JWT Authentication<br/>
-• CORS & Security<br/>
-• Rate Limiting<br/>
+• Go 1.21+ com Gin 1.9<br/>
+• SQL Puro (sem ORM)<br/>
+• JWT v5 + Rate Limiting<br/>
+• Repository Pattern<br/>
+• WebSocket + Firebase<br/>
 
 </td>
 <td width="25%" align="center">
 
 **⚙️ Serviços**
 <br/>
-<sub>Background Processing</sub>
+<sub>CLI Background Tasks</sub>
 
-• Cron Scheduler<br/>
-• Message Queue<br/>
-• WhatsApp Business<br/>
-• Email & SMS<br/>
-• Push Notifications<br/>
+• Goroutines + Semáforos<br/>
+• WhatsApp API Custom<br/>
+• Integração Omie ERP<br/>
+• Lembretes Automáticos<br/>
+• Fila de Mensagens<br/>
 
 </td>
 <td width="25%" align="center">
@@ -181,10 +179,10 @@ flowchart TB
 <sub>Persistência de Dados</sub>
 
 • MySQL 8.0+<br/>
-• GORM ORM<br/>
-• Migrations<br/>
+• SQL Queries Diretas<br/>
+• Transactions<br/>
 • Backup Automático<br/>
-• Replicação<br/>
+• Google Cloud Storage<br/>
 
 </td>
 </tr>
@@ -229,35 +227,50 @@ flowchart TB
 ## 🛠️ Stack Tecnológica
 
 ### Frontend
-- **Framework:** Vue.js 2.6 + Vuetify
-- **PWA:** Service Workers, Cache API, Workbox
-- **Estado:** Vuex
-- **Roteamento:** Vue Router
+- **Framework:** Vue.js 2.6.14 + Vuetify 2.6.0
+- **PWA:** Service Workers, Manifest.json
+- **Estado:** Vuex 3.0.1
+- **Roteamento:** Vue Router 3.2.0
 - **Build:** Vue CLI 5.0
-- **Notificações:** Web Push API, WebSocket
-- **Gráficos:** Chart.js
-- **PDF:** jsPDF, html2canvas
-- **Comunicação:** Axios
+- **Calendário:** FullCalendar 6.1, Vue-cal 4.1, V-calendar 2.4
+- **Gráficos:** Chart.js 4.4 + Vue-chartjs 5.3
+- **PDF:** jsPDF 3.0, html2canvas 1.4, PDFKit 0.17
+- **Editor de Imagem:** Toast UI Image Editor 3.15
+- **Editor de Texto:** CKEditor5 3.0
+- **Notificações:** Vue-toastification 1.7, SweetAlert2 11.14, WebSocket
+- **Pagamentos:** Mercado Pago SDK, Payment Token EFI
+- **Comunicação:** Axios 1.6 + Vue-axios 3.5
+- **Utilitários:** Moment.js, DOMPurify, Vuedraggable, Vue-the-mask
 
 ### Backend
 - **Linguagem:** Go (Golang) 1.21+
-- **Framework:** Gin/Echo
-- **Autenticação:** JWT
-- **Validação:** validator.v10
-- **ORM:** GORM
-- **WebSocket:** gorilla/websocket
+- **Framework Web:** Gin 1.9.1 + CORS
+- **Database:** MySQL Driver 1.8.1 + SQL Puro (sem ORM)
+- **Arquitetura:** Repository Pattern
+- **Autenticação:** JWT v5.0.0
+- **Rate Limiting:** Ulule Limiter 3.11
+- **WebSocket:** gorilla/websocket 1.5.3
+- **Firebase:** Admin SDK 3.13.0
+- **Cloud Storage:** Google Cloud Storage 1.43
+- **Pagamentos:** Stripe Go SDK 83.1
+- **Segurança:** golang.org/x/crypto
 
 ### Serviços
-- **Cron Jobs:** Agendador de tarefas em Go
-- **Mensageria:** Sistema de filas
-- **WhatsApp:** Integração oficial Business API
-- **E-mail:** SMTP + Templates
-- **SMS:** Integração com provedores
+- **Tipo:** Aplicação CLI Go (chamada via Cron do sistema)
+- **Database:** MySQL Driver 1.9.3 + SQL Puro
+- **Arquitetura:** Repository Pattern
+- **Concorrência:** Goroutines + sync.WaitGroup (semáforos)
+- **WhatsApp:** API REST customizada (evo.clickclinicas.com.br)
+- **ERP:** Integração Omie via HTTP
+- **Pagamentos:** Stripe Go SDK 81.4
+- **Funções:** Lembretes (prévio/pós/aniversário), Alteração de status, Validação WhatsApp, Fila de mensagens, Integração cadastro Omie
 
 ### Infraestrutura
-- **Banco de Dados:** MySQL
-- **Storage:** AWS S3 / Local
-- **Deploy:** Docker + CI/CD
+- **Banco de Dados:** MySQL 8.0+
+- **Storage:** Google Cloud Storage + Firebase
+- **Cron Jobs:** Sistema operacional (chamadas CLI)
+- **Pagamentos:** Stripe + Mercado Pago
+- **Deploy:** Servidor dedicado + CI/CD
 - **Monitoramento:** Logs estruturados
 
 ---
